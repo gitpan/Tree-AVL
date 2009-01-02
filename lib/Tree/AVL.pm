@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 #
@@ -1402,7 +1402,7 @@ __END__
 
 =head1 NAME
 
-Tree::AVL - Perl implemenation of an AVL tree for storing comparable objects.  
+Tree::AVL - Perl implemenation of an AVL tree for storing comparable objects 
 
 
 =head1 SYNOPSIS
@@ -1410,9 +1410,10 @@ Tree::AVL - Perl implemenation of an AVL tree for storing comparable objects.
 
 use Tree::AVL;
 
-#######################################################
+
+=head2 EXAMPLE 1
+
 #
-#  Example 1
 #  This example shows usage with default constructor.
 #
 #  With default constructor, the tree works with strings.
@@ -1421,7 +1422,7 @@ use Tree::AVL;
 #  and accessor methods to use, so that you can store any
 #  type of object in the tree (see Example 2).
 #
-#######################################################
+#
 
 # create a tree with default constructor
 my $avltree = Tree::AVL->new();
@@ -1491,20 +1492,16 @@ print "$obj\n";
 undef $avltree;
 
 
+=head2 EXAMPLE 2
 
-print "\nExample 2\n";
-#######################################################
+
 #
-#  Example 2
-#
-#  instantiate tree and specify key, data and
+#  Shows how to instantiate tree and specify key, data and
 #  comparison functions.   insert any object
 #  you want.   Here a basic hash is used, but 
 #  any object of your creation will do when you 
 #  supply an appropriate comparison function.
 #
-#######################################################
-
 
 
 my $elt1 = { _name => "Bob",
