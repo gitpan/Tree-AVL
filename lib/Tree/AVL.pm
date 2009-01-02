@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 
 #
@@ -1408,193 +1408,187 @@ Tree::AVL - Perl implemenation of an AVL tree for storing comparable objects
 =head1 SYNOPSIS
 
 
-use Tree::AVL;
+ use Tree::AVL;
 
 
 =head2 EXAMPLE 1
 
-#
-#  This example shows usage with default constructor.
-#
-#  With default constructor, the tree works with strings.
-#
-#  Constructor can also be passed a comparison function,
-#  and accessor methods to use, so that you can store any
-#  type of object in the tree (see Example 2).
-#
-#
+ #
+ #  This example shows usage with default constructor.
+ #
+ #  With default constructor, the tree works with strings.
+ #
+ #  The constructor can also be passed a comparison function
+ #  and accessor methods to use, so that you can store any
+ #  type of object you've defined in the tree (see Example 2).
+ #
 
-# create a tree with default constructor
-my $avltree = Tree::AVL->new();
+ # create a tree with default constructor
+ my $avltree = Tree::AVL->new();
+ 
+ # can insert strings by default
+ $avltree->insert("arizona");  
+ $avltree->insert("arkansas");
+ $avltree->insert("massachusetts");
+ $avltree->insert("maryland");
+ $avltree->insert("montana");
+ $avltree->insert("madagascar"); # just seeing if you're paying attention..
 
-# can insert strings by default
-$avltree->insert("arizona");  
-$avltree->insert("arkansas");
-$avltree->insert("massachusetts");
-$avltree->insert("maryland");
-$avltree->insert("montana");
-$avltree->insert("madagascar");
+ print $avltree->get_height() . "\n";  # output: 2 (height is zero-based) 
 
-print $avltree->get_height() . "\n";  # output: 2 (height is zero-based)
+ $avltree->print("*"); # output:
+                       #
+                       # *maryland: maryland: height: 2: balance: 0
+                       # **massachusetts: massachusetts: height: 1: balance: 0
+                       # ***montana: montana: height: 0: balance: 0
+                       # **arkansas: arkansas: height: 1: balance: 0
+                       # ***madagascar: madagascar: height: 0: balance: 0
+                       # ***arizona: arizona: height: 0: balance: 0
+ 
+ my $obj = $avltree->remove("maryland");
+ print "found: $obj\n";  # output: found: maryland
+ my $obj = $avltree->remove("maryland");
+ if(!$obj){
+     print "object was not in tree.\n";
+ }
+ 
+ $avltree->print("*"); # output:
+                       # 
+                       # *madagascar: madagascar: height: 2: balance: 0
+                       # **massachusetts: massachusetts: height: 1: balance: 0
+                       # ***montana: montana: height: 0: balance: 0
+                       # **arkansas: arkansas: height: 1: balance: 1
+                       # ***arizona: arizona: height: 0: balance: 0
 
-$avltree->print("*"); # output:
-                      #
-                      # *maryland: maryland: height: 2: balance: 0
-                      # **massachusetts: massachusetts: height: 1: balance: 0
-                      # ***montana: montana: height: 0: balance: 0
-                      # **arkansas: arkansas: height: 1: balance: 0
-                      # ***madagascar: madagascar: height: 0: balance: 0
-                      # ***arizona: arizona: height: 0: balance: 0
+ # retreive an iterator over the objects in the tree.
+ my $iterator = $avltree->iterator();
+ while(my $obj = $iterator->()){
+     print $obj . "\n";   # outputs objects in order low-to-high
+ } 
+ 
+ # retreive a reverse-order iterator over the objects in the tree.
+ my $iterator = $avltree->iterator(">");
+ while(my $obj = $iterator->()){
+     print $obj . "\n"; # outputs objects in order high-to-low
+ }
 
-my $obj = $avltree->remove("maryland");
-print "found: $obj\n";  # output: found: maryland
-my $obj = $avltree->remove("maryland");
-if(!$obj){
-    print "object was not in tree.\n";
-}
+ # retrieve all objects from tree at once
+ my @list = $avltree->get_list();
+ foreach my $obj (@list){
+     print $obj . "\n"; # outputs objects in order low-to-high
+ } 
 
-$avltree->print("*"); # output:
-                      # 
-                      # *madagascar: madagascar: height: 2: balance: 0
-                      # **massachusetts: massachusetts: height: 1: balance: 0
-                      # ***montana: montana: height: 0: balance: 0
-                      # **arkansas: arkansas: height: 1: balance: 1
-                      # ***arizona: arizona: height: 0: balance: 0
+ my $obj = $avltree->pop_smallest();  # retrieves arizona
+ print "$obj\n"; 
 
-
-# retreive an iterator over the objects in the tree.
-my $iterator = $avltree->iterator();
-while(my $obj = $iterator->()){
-    print $obj . "\n";   # outputs objects in order low-to-high
-}
-
-# retreive a reverse-order iterator over the objects in the tree.
-my $iterator = $avltree->iterator(">");
-while(my $obj = $iterator->()){
-    print $obj . "\n"; # outputs objects in order high-to-low
-}
-
-# retrieve all objects from tree at once
-my @list = $avltree->get_list();
-foreach my $obj (@list){
-    print $obj . "\n"; # outputs objects in order low-to-high
-}
-
-
-my $obj = $avltree->pop_smallest();  # retrieves arizona
-print "$obj\n";
-
-my $obj = $avltree->pop_largest();  # retrieves montana
-print "$obj\n";
-
-
-
-undef $avltree;
-
+ my $obj = $avltree->pop_largest();  # retrieves montana
+ print "$obj\n"; 
+  
+ undef $avltree; 
+  
+ 
 
 =head2 EXAMPLE 2
 
-
-#
-#  Shows how to instantiate tree and specify key, data and
-#  comparison functions.   insert any object
-#  you want.   Here a basic hash is used, but 
-#  any object of your creation will do when you 
-#  supply an appropriate comparison function.
-#
-
-
-my $elt1 = { _name => "Bob",
-	     _phone => "444-4444",};
-
-my $elt2 = { _name => "Amy",
-	     _phone => "555-5555",};
-
-my $elt3 = { _name => "Sara",
+ 
+ #
+ #  Shows how to instantiate tree and specify key, data and
+ #  comparison functions.   insert any object
+ #  you want.   Here a basic hash is used, but 
+ #  any object of your creation will do when you 
+ #  supply an appropriate comparison function.
+ #
+ 
+ 
+ my $elt1 = { _name => "Bob",
+ 	     _phone => "444-4444",}; 
+ 
+ my $elt2 = { _name => "Amy",
+ 	     _phone => "555-5555",}; 
+ 
+ my $elt3 = { _name => "Sara",
 	     _phone => "666-6666",}; 
+ 
+ $avltree = Tree::AVL->new(
+     fcompare => sub{ my ($o1, $o2) = @_;
+ 		     if($o1->{_name} gt $o2->{_name}){ return -1}
+ 		     elsif($o1->{_name} lt $o2->{_name}){ return -1}
+ 		     return 0;},
+     fget_key => sub{ my($obj) = @_;
+ 		     return $obj->{_name};},
+     fget_data => sub{ my($obj) = @_;
+ 		      return $obj->{_phone};},
+     );
+ 
+ $avltree->insert($elt1);
+ $avltree->insert($elt2);
+ $avltree->insert($elt3);
+ 
+ 
+ $avltree->print("-");   # output:
+                         #
+                         # -Bob: 444-4444: height: 1: balance: 1
+                         # --Amy: 555-5555: height: 0: balance: 0
+                         #
 
-$avltree = Tree::AVL->new(
-    fcompare => sub{ my ($o1, $o2) = @_;
-		     if($o1->{_name} gt $o2->{_name}){ return -1}
-		     elsif($o1->{_name} lt $o2->{_name}){ return -1}
-		     return 0;},
-    fget_key => sub{ my($obj) = @_;
-		     return $obj->{_name};},
-    fget_data => sub{ my($obj) = @_;
-		      return $obj->{_phone};},
-    );
-
-
-
-$avltree->insert($elt1);
-$avltree->insert($elt2);
-$avltree->insert($elt3);
-
-
-$avltree->print("-");   # output:
-                        #
-                        # -Bob: 444-4444: height: 1: balance: 1
-                        # --Amy: 555-5555: height: 0: balance: 0
-                        #
-
-$avltree->insert($elt4); # output: "Error: inserted uninitialized object.."
-
-
-exit;
+ $avltree->insert($elt4); # output: "Error: inserted uninitialized object.."
   
+
+ exit;
+   
 
 =head1 DESCRIPTION
 
-AVL Trees are balanced binary trees, first introduced
-in "An Algorithm for the Organization of Data" by 
-Adelson-Velskii and Landis in 1962.
+ AVL Trees are balanced binary trees, first introduced
+ in "An Algorithm for the Organization of Information" by 
+ Adelson-Velskii and Landis in 1962.
 
-Balance is kept in an AVL tree during insertion and
-deletion by maintaining a 'balance' factor in each node.
+ Balance is kept in an AVL tree during insertion and deletion
+ by maintaining a 'balance' factor in each node.
+ 
+ If the subtree below any node in the tree is evenly balanced,
+ the balance factor for that node will be 0.    
 
-If the subtree below any node in the tree is evenly balanced,
-the balance factor for that node will be 0.    
+ When the right-subtree below a node is taller than the left-subtree,
+ the balance factor will be 1.  For the opposite case, the balance
+ factor will be -1.
+ 
+ If the either subtree is heavier (taller by more than 2 levels) than the 
+ other, the balance factor within the node will be set to (+-)2, 
+ and the subtree below that node will be rebalanced.  
 
-When the right-subtree below a node is taller than the left-subtree,
-the balance factor will be 1.  For the opposite case, the balance
-factor will be -1.
-
-If the either subtree is heavier (taller by more than 2 levels) than the 
-other, the balance factor within the node will be set to (+-)2, 
-and the subtree below that node will be rebalanced.  
-
-Re-balancing is done via 'single' or 'double' rotations, each of which
-takes constant-time.
-
-Insertion into an AVL tree will require at most 1 rotation.
-
-Deletion from an AVL tree may take as much as log(n) rotations
-in order to restore balance.
-
-Balanced trees can save huge amounts of time in your programs
-when used over regular flat data structures.  For example, if 
-you are processing as much as 1,125,899,906,842,624 ordered objects 
-on some super-awesome mega workstation, the worst-case time (comparisons)
-required  to access one of those objects will be 1,125,899,906,842,624 if
-you keep them in a flat data structure.    However, using a balanced 
-tree such as a 2-3 tree, a Red-Black tree or an AVL tree, worst-case 
-time (comparisons) required will be just 50.  
+ Re-balancing is done via 'single' or 'double' rotations, each of which
+ takes constant-time.
+ 
+ Insertion into an AVL tree will require at most 1 rotation. 
+ 
+ Deletion from an AVL tree may take as much as log(n) rotations
+ in order to restore balance.
+ 
+ Balanced trees can save huge amounts of time in your programs
+ when used over regular flat data structures.  For example, if 
+ you are processing as much as 1,125,899,906,842,624 ordered objects 
+ on some super-awesome mega workstation, the worst-case time (comparisons)
+ required  to access one of those objects will be 1,125,899,906,842,624 if
+ you keep them in a flat data structure.    However, using a balanced 
+ tree such as a 2-3 tree, a Red-Black tree or an AVL tree, the worst-case 
+ time (comparisons) required will be just 50.  
+ 
 
 
 =head2 EXPORT
 
-None by default.
-
+ None by default.
 
 
 =head1 SEE ALSO
 
-"An Algorithm for the Organization of Information",  G.M. Adelson-Velsky and
-E.M. Landis.
+ "An Algorithm for the Organization of Information",  G.M. Adelson-Velsky and
+ E.M. Landis.
 
 =head1 AUTHOR
 
-Matthias Beebe, E<lt>matthiasbeebe@gmail.com<gt>
+Matthias Beebe, E<lt>matthiasbeebe@gmail.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 

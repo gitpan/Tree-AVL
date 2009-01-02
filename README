@@ -1,9 +1,9 @@
-Tree-AVL version 0.02
+Tree-AVL version 0.03
 =====================
 
 An implementation of an AVL tree for storing comparable objects.  
 AVL Trees are balanced binary trees, first introduced
-in "An Algorithm for the Organization of Data" by 
+in "An Algorithm for the Organization of Information" by 
 Adelson-Velskii and Landis in 1962.
 
 Balance is kept in an AVL tree during insertion and
@@ -63,7 +63,7 @@ $avltree->insert("arkansas");
 $avltree->insert("massachusetts");
 $avltree->insert("maryland");
 $avltree->insert("montana");
-$avltree->insert("madagascar");
+$avltree->insert("madagascar"); # just seeing if you're paying attention..
 
 print $avltree->get_height() . "\n";  # output: 2 (height is zero-based)
 
