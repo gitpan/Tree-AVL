@@ -1,11 +1,11 @@
 package Tree::AVL;
 
-use 5.008007;
+
 use strict;
 use warnings;
 
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 
 #
@@ -1398,11 +1398,10 @@ sub max
 
 1;
 __END__
-# Below is stub documentation for your module. You'd better edit it!
 
 =head1 NAME
 
-Tree::AVL - Perl implemenation of an AVL tree for storing comparable objects 
+Tree::AVL - An AVL (balanced binary) tree for time efficient storage and retrieval of comparable objects 
 
 
 =head1 SYNOPSIS
@@ -1413,7 +1412,7 @@ Tree::AVL - Perl implemenation of an AVL tree for storing comparable objects
 
 =head2 EXAMPLE 1
 
- #
+
  #  This example shows usage with default constructor.
  #
  #  With default constructor, the tree works with strings.
@@ -1421,7 +1420,6 @@ Tree::AVL - Perl implemenation of an AVL tree for storing comparable objects
  #  The constructor can also be passed a comparison function
  #  and accessor methods to use, so that you can store any
  #  type of object you've defined in the tree (see Example 2).
- #
 
  # create a tree with default constructor
  my $avltree = Tree::AVL->new();
@@ -1491,13 +1489,12 @@ Tree::AVL - Perl implemenation of an AVL tree for storing comparable objects
 =head2 EXAMPLE 2
 
  
- #
  #  Shows how to instantiate tree and specify key, data and
- #  comparison functions.   insert any object
+ #  comparison functions, so you can store any object
  #  you want.   Here a basic hash is used, but 
  #  any object of your creation will do when you 
  #  supply an appropriate comparison function.
- #
+
  
  
  my $elt1 = { _name => "Bob",
@@ -1539,52 +1536,88 @@ Tree::AVL - Perl implemenation of an AVL tree for storing comparable objects
 
 =head1 DESCRIPTION
 
- AVL Trees are balanced binary trees, first introduced
- in "An Algorithm for the Organization of Information" by 
- Adelson-Velskii and Landis in 1962.
+AVL Trees are balanced binary trees, first introduced in 
+"An Algorithm for the Organization of Information" by Adelson-Velskii and Landis
+in 1962.
 
- Balance is kept in an AVL tree during insertion and deletion
- by maintaining a 'balance' factor in each node.
- 
- If the subtree below any node in the tree is evenly balanced,
- the balance factor for that node will be 0.    
+Balance is kept in an AVL tree during insertion and deletion
+by maintaining a 'balance' factor in each node.
 
- When the right-subtree below a node is taller than the left-subtree,
- the balance factor will be 1.  For the opposite case, the balance
- factor will be -1.
- 
- If the either subtree is heavier (taller by more than 2 levels) than the 
- other, the balance factor within the node will be set to (+-)2, 
- and the subtree below that node will be rebalanced.  
+If the subtree rooted at any node in the tree is evenly balanced,
+the balance factor for that node will be 0.    
 
- Re-balancing is done via 'single' or 'double' rotations, each of which
- takes constant-time.
- 
- Insertion into an AVL tree will require at most 1 rotation. 
- 
- Deletion from an AVL tree may take as much as log(n) rotations
- in order to restore balance.
- 
- Balanced trees can save huge amounts of time in your programs
- when used over regular flat data structures.  For example, if 
- you are processing as much as 1,125,899,906,842,624 ordered objects 
- on some super-awesome mega workstation, the worst-case time (comparisons)
- required  to access one of those objects will be 1,125,899,906,842,624 if
- you keep them in a flat data structure.    However, using a balanced 
- tree such as a 2-3 tree, a Red-Black tree or an AVL tree, the worst-case 
- time (comparisons) required will be just 50.  
- 
+When the right-subtree below a node is taller than the left-subtree,
+the balance factor will be 1.  For the opposite case, the balance
+factor will be -1.
+
+If the either subtree below a node is heavier (taller by more than 2 levels) 
+than the other, the balance factor within the node will be set to (+-)2, 
+and the subtree rooted at that node will be rebalanced.  
+
+Re-balancing is done via 'single' or 'double' rotations, each of which
+takes constant time.
+
+Insertion into an AVL tree will require at most 1 single or double rotation. 
+
+Deletion from an AVL tree may take as much as log(n) rotations
+in order to restore balance.
+
+Balanced trees can save huge amounts of time in your programs
+when used over regular flat data structures.  For example, if 
+you are processing as much as 1,125,899,906,842,624 ordered objects 
+on some super awesome mega workstation, the worst-case time (comparisons)
+required  to access one of those objects will be 1,125,899,906,842,624 if
+you keep them in a flat data structure.    However, using a balanced 
+tree such as a 2-3 tree, a Red-Black tree or an AVL tree, the worst-case 
+time (comparisons) required will be just 50.  
 
 
-=head2 EXPORT
 
- None by default.
+=head1 METHODS
+
+ new()
+
+Creates a new AVL tree object.  Without any arguments, the constructor returns a tree that works with strings and
+uses lexical comparison.   If you pass it an appropriate comparison function, the returned tree will work with any object of your
+creation.   Also, you can pass in functions to get the 'key' and 'data' of any object as well (this is useful for printing
+the contents of the tree).
+
+ insert($)
+
+Places an object in the tree.  Note:  This function and others have been implemented using iterative methods rather than recursive subroutine
+calls in order to maximize efficiency.
+
+ remove($)
+
+Removes an object from the tree.
+
+ largest()
+
+Returns the largest object in the tree.
+
+ smallest()
+
+Returns the smallest object in the tree.
+
+ iterator()
+
+Returns an iterator over the values in the tree.  By Default the iterator is in-order from lowest to highest.  If you pass in the parameter ">", the order
+of the objects returened by the iterator will be from highest to lowest.
+
+ print()
+
+Dumps the contents of the tree to STDOUT.   If passed an additional string parameter, it will be used to visually distinguish objects by their respective heights
+in the tree (by prepending the string passed-in to the object's printed value).
+
+=head1 EXPORT
+
+None by default.
 
 
 =head1 SEE ALSO
 
- "An Algorithm for the Organization of Information",  G.M. Adelson-Velsky and
- E.M. Landis.
+"An Algorithm for the Organization of Information",  G.M. Adelson-Velsky and
+E.M. Landis.
 
 =head1 AUTHOR
 
