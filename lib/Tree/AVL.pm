@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 
 #
@@ -1415,11 +1415,10 @@ Tree::AVL - An AVL (balanced binary) tree for time efficient storage and retriev
 
  #  This example shows usage with default constructor.
  #
- #  With default constructor, the tree works with strings.
- #
- #  The constructor can also be passed a comparison function
+ #  By default, the tree works with strings.  The 
+ #  constructor can also be passed a comparison function
  #  and accessor methods to use, so that you can store any
- #  type of object you've defined in the tree (see Example 2).
+ #  type of object you've defined in the tree. (see Example 2).
 
  # create a tree with default constructor
  my $avltree = Tree::AVL->new();
@@ -1494,8 +1493,18 @@ Tree::AVL - An AVL (balanced binary) tree for time efficient storage and retriev
  #  you want.   Here a basic hash is used, but 
  #  any object of your creation will do when you 
  #  supply an appropriate comparison function.
-
- 
+ # 
+ #  Note:  in this example, anonymous subroutines are
+ #  passed in to the constructor, but you can just as well supply
+ #  your own object's comparison methods by name-   i.e.,
+ #
+ #  $avltree = Tree::AVL->new(
+ #          fcompare => \&MyObj::compare,
+ #           
+ #          . . . 
+ #           
+ #          etc...
+  
  
  my $elt1 = { _name => "Bob",
  	     _phone => "444-4444",}; 
@@ -1526,7 +1535,7 @@ Tree::AVL - An AVL (balanced binary) tree for time efficient storage and retriev
                          #
                          # -Bob: 444-4444: height: 1: balance: 1
                          # --Amy: 555-5555: height: 0: balance: 0
-                         #
+                         # --Sara: 666-6666: height: 0: balance: 0
 
  $avltree->insert($elt4); # output: "Error: inserted uninitialized object.."
   
@@ -1575,39 +1584,87 @@ time (comparisons) required will be just 50.
 
 =head1 METHODS
 
- new()
+
+
+=head2 new()
+
+
+ my $avltree = Tree::AVL->new();  # optionally pass in comparison, key accessor, and data accessor functions
 
 Creates a new AVL tree object.  Without any arguments, the constructor returns a tree that works with strings and
 uses lexical comparison.   If you pass it an appropriate comparison function, the returned tree will work with any object of your
 creation.   Also, you can pass in functions to get the 'key' and 'data' of any object as well (this is useful for printing
 the contents of the tree).
 
- insert($)
 
-Places an object in the tree.  Note:  This function and others have been implemented using iterative methods rather than recursive subroutine
-calls in order to maximize efficiency.
 
- remove($)
+=head2 insert()
 
-Removes an object from the tree.
 
- largest()
+ $avltree->insert($thing);
 
-Returns the largest object in the tree.
+Places an object or thing in the tree.  Note:  This function and others have been implemented using iterative methods rather than recursive
+calls in order to reduce subroutine-call overhead and enhance efficiency.
 
- smallest()
 
-Returns the smallest object in the tree.
 
- iterator()
 
-Returns an iterator over the values in the tree.  By Default the iterator is in-order from lowest to highest.  If you pass in the parameter ">", the order
-of the objects returened by the iterator will be from highest to lowest.
 
- print()
+=head2 remove()
+
+ my $deleted_thing = $avltree->remove($thing);
+
+Removes items from the tree.
+
+
+
+
+
+=head2 largest()
+
+ my $largest_thing = $avltree->largest();
+
+Returns the largest item in the tree.
+
+
+
+
+
+
+=head2 smallest()
+
+ my $smallest_thing = $avltree->smallest();
+
+Returns the smallest item in the tree.
+
+
+
+
+
+
+=head2 iterator()
+
+ my $it = $avltree->iterator();
+
+Returns an iterator over the items in the tree.  By Default the iterator is in-order from lowest to highest.  If you pass in the parameter ">", the order
+of the items returned by the iterator will be from highest to lowest.
+
+
+
+
+
+=head2 print()
+
+ $avltree->print();
 
 Dumps the contents of the tree to STDOUT.   If passed an additional string parameter, it will be used to visually distinguish objects by their respective heights
 in the tree (by prepending the string passed-in to the object's printed value).
+
+
+
+
+
+
 
 =head1 EXPORT
 

@@ -1,4 +1,4 @@
-Tree-AVL version 0.04
+Tree-AVL version 0.05
 =====================
 
 An implementation of an AVL tree for storing comparable objects.  
@@ -39,142 +39,153 @@ time (comparisons) required will be just 50.
 Example usage
 =====================
 
-use Tree::AVL;
+ use Tree::AVL;
+ 
+ #######################################################
+ #
+ #  Example 1
+ #  This example shows usage with default constructor.
+ #
+ #  With default constructor, the tree works with strings.
+ #
+ #  Constructor can also be passed a comparison function,
+ #  and accessor methods to use, so that you can store any
+ #  type of object in the tree (see Example 2).
+ #
+ #######################################################
+ 
+ # create a tree with default constructor
+ my $avltree = Tree::AVL->new();
+ 
+ # can insert strings by default
+ $avltree->insert("arizona");  
+ $avltree->insert("arkansas");
+ $avltree->insert("massachusetts");
+ $avltree->insert("maryland");
+ $avltree->insert("montana");
+ $avltree->insert("madagascar"); # just seeing if you're paying attention..
+ 
+ print $avltree->get_height() . "\n";  # output: 2 (height is zero-based)
+ 
+ $avltree->print("*"); # output:
+                       #
+                       # *maryland: maryland: height: 2: balance: 0
+                       # **massachusetts: massachusetts: height: 1: balance: 0
+                       # ***montana: montana: height: 0: balance: 0
+                       # **arkansas: arkansas: height: 1: balance: 0
+                       # ***madagascar: madagascar: height: 0: balance: 0
+                       # ***arizona: arizona: height: 0: balance: 0
+ 
+ my $obj = $avltree->remove("maryland");
+ print "found: $obj\n";  # output: found: maryland
+ my $obj = $avltree->remove("maryland");
+ if(!$obj){
+     print "object was not in tree.\n";
+ }
+ 
+ $avltree->print("*"); # output:
+                       # 
+                       # *madagascar: madagascar: height: 2: balance: 0
+                       # **massachusetts: massachusetts: height: 1: balance: 0
+                       # ***montana: montana: height: 0: balance: 0
+                       # **arkansas: arkansas: height: 1: balance: 1
+                       # ***arizona: arizona: height: 0: balance: 0
+ 
+ 
+ # retreive an iterator over the objects in the tree.
+ my $iterator = $avltree->iterator();
+ while(my $obj = $iterator->()){
+     print $obj . "\n";   # outputs objects in order low-to-high
+ }
+ 
+ # retreive a reverse-order iterator over the objects in the tree.
+ my $iterator = $avltree->iterator(">");
+ while(my $obj = $iterator->()){
+     print $obj . "\n"; # outputs objects in order high-to-low
+ } 
 
-#######################################################
-#
-#  Example 1
-#  This example shows usage with default constructor.
-#
-#  With default constructor, the tree works with strings.
-#
-#  Constructor can also be passed a comparison function,
-#  and accessor methods to use, so that you can store any
-#  type of object in the tree (see Example 2).
-#
-#######################################################
+ # retrieve all objects from tree at once
+ my @list = $avltree->get_list();
+ foreach my $obj (@list){
+     print $obj . "\n"; # outputs objects in order low-to-high
+ }
+ 
 
-# create a tree with default constructor
-my $avltree = Tree::AVL->new();
+ my $obj = $avltree->pop_smallest();  # retrieves arizona
+ print "$obj\n";
 
-# can insert strings by default
-$avltree->insert("arizona");  
-$avltree->insert("arkansas");
-$avltree->insert("massachusetts");
-$avltree->insert("maryland");
-$avltree->insert("montana");
-$avltree->insert("madagascar"); # just seeing if you're paying attention..
-
-print $avltree->get_height() . "\n";  # output: 2 (height is zero-based)
-
-$avltree->print("*"); # output:
-                      #
-                      # *maryland: maryland: height: 2: balance: 0
-                      # **massachusetts: massachusetts: height: 1: balance: 0
-                      # ***montana: montana: height: 0: balance: 0
-                      # **arkansas: arkansas: height: 1: balance: 0
-                      # ***madagascar: madagascar: height: 0: balance: 0
-                      # ***arizona: arizona: height: 0: balance: 0
-
-my $obj = $avltree->remove("maryland");
-print "found: $obj\n";  # output: found: maryland
-my $obj = $avltree->remove("maryland");
-if(!$obj){
-    print "object was not in tree.\n";
-}
-
-$avltree->print("*"); # output:
-                      # 
-                      # *madagascar: madagascar: height: 2: balance: 0
-                      # **massachusetts: massachusetts: height: 1: balance: 0
-                      # ***montana: montana: height: 0: balance: 0
-                      # **arkansas: arkansas: height: 1: balance: 1
-                      # ***arizona: arizona: height: 0: balance: 0
-
-
-# retreive an iterator over the objects in the tree.
-my $iterator = $avltree->iterator();
-while(my $obj = $iterator->()){
-    print $obj . "\n";   # outputs objects in order low-to-high
-}
-
-# retreive a reverse-order iterator over the objects in the tree.
-my $iterator = $avltree->iterator(">");
-while(my $obj = $iterator->()){
-    print $obj . "\n"; # outputs objects in order high-to-low
-}
-
-# retrieve all objects from tree at once
-my @list = $avltree->get_list();
-foreach my $obj (@list){
-    print $obj . "\n"; # outputs objects in order low-to-high
-}
-
-
-my $obj = $avltree->pop_smallest();  # retrieves arizona
-print "$obj\n";
-
-my $obj = $avltree->pop_largest();  # retrieves montana
-print "$obj\n";
-
-
-
-undef $avltree;
-
-
-
-print "\nExample 2\n";
-#######################################################
-#
-#  Example 2
-#
-#  instantiate tree and specify key, data and
-#  comparison functions.   insert any object
-#  you want.   Here a basic hash is used, but 
-#  any object of your creation will do when you 
-#  supply an appropriate comparison function.
-#
-#######################################################
-
-
-
-my $elt1 = { _name => "Bob",
-	     _phone => "444-4444",};
-
-my $elt2 = { _name => "Amy",
-	     _phone => "555-5555",};
-
-my $elt3 = { _name => "Sara",
-	     _phone => "666-6666",}; 
-
-$avltree = Tree::AVL->new(
-    fcompare => sub{ my ($o1, $o2) = @_;
-		     if($o1->{_name} gt $o2->{_name}){ return -1}
-		     elsif($o1->{_name} lt $o2->{_name}){ return -1}
-		     return 0;},
-    fget_key => sub{ my($obj) = @_;
-		     return $obj->{_name};},
-    fget_data => sub{ my($obj) = @_;
-		      return $obj->{_phone};},
-    );
-
-
-
-$avltree->insert($elt1);
-$avltree->insert($elt2);
-$avltree->insert($elt3);
-
-
-$avltree->print("-");   # output:
-                        #
-                        # -Bob: 444-4444: height: 1: balance: 1
-                        # --Amy: 555-5555: height: 0: balance: 0
-                        #
-
-$avltree->insert($elt4); # output: "Error: inserted uninitialized object.."
+ my $obj = $avltree->pop_largest();  # retrieves montana
+ print "$obj\n";
+  
+  
+ 
+ undef $avltree;
+  
+ 
+ 
+ print "\nExample 2\n";
+ #######################################################
+ #
+ #  Example 2
+ #
+ #  instantiate tree and specify key, data and
+ #  comparison functions.   insert any object
+ #  you want.   Here a basic hash is used, but 
+ #  any object of your creation will do when you 
+ #  supply an appropriate comparison function.
+ #
+ #  Note: whereas in this example, anonymous subroutines are
+ #  passed in to the constructor, you can just as well supply
+ #  your own object's comparison methods-   i.e.,
+ #
+ #  $avltree = Tree::AVL->new(
+ #          fcompare => \&MyObj::compare,
+ #           
+ #          . . . 
+ #           
+ #          etc... 
+ #
+ #######################################################
+  
+ 
+ 
+ my $elt1 = { _name => "Bob",
+ 	     _phone => "444-4444",};
+ 
+ my $elt2 = { _name => "Amy",
+ 	     _phone => "555-5555",}; 
+ 
+ my $elt3 = { _name => "Sara",
+ 	     _phone => "666-6666",}; 
+ 
+ $avltree = Tree::AVL->new(
+     fcompare => sub{ my ($o1, $o2) = @_;
+ 		     if($o1->{_name} gt $o2->{_name}){ return -1}
+ 		     elsif($o1->{_name} lt $o2->{_name}){ return -1}
+ 		     return 0;},
+     fget_key => sub{ my($obj) = @_;
+ 		     return $obj->{_name};},
+     fget_data => sub{ my($obj) = @_;
+ 		      return $obj->{_phone};},
+     );
 
 
-exit;
+
+ $avltree->insert($elt1);
+ $avltree->insert($elt2);
+ $avltree->insert($elt3);
+ 
+
+ $avltree->print("-");   # output:
+                         #
+                         # -Bob: 444-4444: height: 1: balance: 1
+                         # --Amy: 555-5555: height: 0: balance: 0
+                         # --Sara: 666-6666: height: 0: balance: 0
+
+ $avltree->insert($elt4); # output: "Error: inserted uninitialized object.."
+ 
+
+ exit;
 
 
 INSTALLATION
