@@ -7,7 +7,7 @@
 
 # change 'tests => 1' to 'tests => last_test_to_print';
 
-use Test::More tests => 18;
+use Test::More tests => 19;
 BEGIN { use_ok('Tree::AVL') };
 
 #########################
@@ -59,8 +59,11 @@ is( $@, '', '$@ is not set after object insert' );
 is( $avltree->get_height(), 2, 'the height is 2' ); 
 
 
+my $root_obj = $avltree->get_root();
+is( $root_obj, 'maryland', 'object at root is maryland\n' );
+
 my $obj = $avltree->remove("maryland");
-is( $obj, 'maryland', '$object removed is maryland\n' );
+is( $obj, 'maryland', 'object removed is maryland\n' );
 
 is( $obj = $avltree->remove("maryland"), undef, 'object was not found' );
 
