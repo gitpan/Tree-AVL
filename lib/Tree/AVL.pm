@@ -7,7 +7,7 @@ use strict;
 use warnings;
 
 
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 
 #
@@ -52,10 +52,7 @@ our $VERSION = '1.01';
 # 
 
 
-package Tree::AVL;
-use strict;
-use warnings;
-use Carp;
+
 
 ##################################################
 #
