@@ -5,7 +5,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     NAME              => 'Tree::AVL',
     VERSION_FROM      => 'lib/Tree/AVL.pm', # finds $VERSION
-    PREREQ_PM         => {}, # e.g., Module::Name => 1.1
+    PREREQ_PM         => {Test::More => 0,}, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/Tree/AVL.pm', # retrieve abstract from module
        AUTHOR         => 'Matthias Beebe <matthias@localdomain>') : ()),

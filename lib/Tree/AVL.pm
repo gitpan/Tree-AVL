@@ -1,11 +1,13 @@
 package Tree::AVL;
 
 
+
+use Carp;
 use strict;
 use warnings;
 
 
-our $VERSION = '0.07';
+our $VERSION = '1.01';
 
 
 #
@@ -106,7 +108,7 @@ sub insert
 {
     my ($self, $object) = @_;    
     if(!$object){
-	croak "Error: inserted uninitialized object into AVL tree.\n";
+	croak "Error: cannot insert uninitialized object into AVL tree.\n";
     }
     $self->avl_insert($object);
     return;
@@ -145,7 +147,10 @@ sub avl_insert
     }
     else # need to insert object if object is not already in tree
     {	    	    
-	$own_key = $node_obj->$get_key_func;
+	$own_key = $node_obj->$get_key_func();
+	if(!$own_key){
+	    croak "Error:  get_key() method provided to Tree::AVL object returned a null value\n";
+	}
 
 	my $cmpfunc = $self->{fcompare};
 	my $result = $cmpfunc->($node_obj, $object);
@@ -1312,7 +1317,17 @@ sub print
 	$o_char = $char;
     }
            
-    print $char . $self->get_key($node) . ": " . $self->get_data($node);
+    my $key = $self->get_key($node);
+    my $data = $self->get_data($node);
+
+    if(!$key){
+	croak "get_key() function provided to Tree::AVL object returned a null value\n";
+    }
+    if(!$data){
+	$data = "";
+    }
+
+    print $char . $key . ": " . $data;
     print ": height: " . $self->get_height($node) . ": balance: " . $node->{_balance} . "\n";
 
     if($node->{_left_node}){
@@ -1335,7 +1350,19 @@ sub print_node
     if(!$o_char){
 	$o_char = $char;
     }           
-    print $char . $self->get_key($node) . ": " . $self->get_data($node) .  ": balance: " . $node->{_balance} . "\n";
+
+    my $key = $self->get_key($node);
+    my $data = $self->get_data($node);
+    
+    if(!$key){
+	croak "get_key() function provided to Tree::AVL object returned a null value\n";
+    }
+    if(!$data){
+	$data = "";
+    }
+
+
+    print $char . $key . ": " . $data .  ": balance: " . $node->{_balance} . "\n";
     if($node->{_left_node}){
 	my $leftnode = $node->{_left_node};
 	$self->print_node($leftnode, $char . $o_char, $o_char);
