@@ -1,10 +1,10 @@
 --- #YAML:1.0
 name:                Tree-AVL
-version:             1.02
-abstract:            An AVL (balanced binary) tree for time efficient storage and retrieval of comparable objects 
+version:             1.04
+abstract:            An AVL (balanced binary) tree for time-efficient storage and retrieval of comparable objects 
 license:             ~
 author:              
-    - Matthias Beebe <matthias@localdomain>
+    - Matthias Beebe <matthiasbeebe@gmail.com>
 generated_by:        ExtUtils::MakeMaker version 6.42
 distribution_type:   module
 requires:     

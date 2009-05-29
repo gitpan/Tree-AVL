@@ -1,15 +1,4 @@
-package Tree::AVL;
-
-
-
-use Carp;
-use strict;
-use warnings;
-
-
-our $VERSION = '1.02';
-
-
+##############################################################################
 #
 # AVL.pm
 #
@@ -50,8 +39,15 @@ our $VERSION = '1.02';
 # tree such as a 2-3 tree, a Red-Black tree or an AVL tree, worst-case 
 # time (comparisons) required will be just 50.  
 # 
+##############################################################################
 
+package Tree::AVL;
 
+use Carp;
+use strict;
+use warnings;
+
+our $VERSION = '1.04';
 
 
 ##################################################
@@ -90,7 +86,6 @@ sub new {
     if(!$self->{fget_data}){
 	$self->{fget_data}  = sub{ return $_[0]; };
     }
-
 
     return $self;
 }
@@ -167,14 +162,11 @@ sub avl_insert
 		  		
 		$$node->{_right_node} = $new_node;		
 		$increase = 1;	
-
-
 	    }
 	    else{ # descend and insert into right subtree
 		$change = $self->avl_insert($object, \$$node->{_right_node}, $depth+1);		       
 		$increase = 1 * $change;
-	    }
-	    
+	    }	    
 	}  
 	else{  # insert into left subtree
 	    if (!defined($$node->{_left_node})){  # Need to create a new node.	    		
@@ -230,7 +222,6 @@ sub remove
 }
 
 
-
 #
 # avl_delete
 #
@@ -267,7 +258,7 @@ sub delete{
 		return;
 	    }
 	    else{
-		($deleted_node, my $new_ref, $change) = $self->delete($object, \$$node->{_left_node}, $depth+1);
+		($deleted_node, my $new_ref, $change) = Tree::AVL::delete($self, $object, \$$node->{_left_node}, $depth+1);
 		if($deleted_node){
 		    $$node->{_left_node} = $new_ref;
 		    $decrease = -1 * $change;
@@ -282,7 +273,7 @@ sub delete{
 		return;
 	    }
 	    else{	
-		($deleted_node, my $new_ref, $change) = $self->delete($object, \$$node->{_right_node}, $depth+1);
+		($deleted_node, my $new_ref, $change) = Tree::AVL::delete($self, $object, \$$node->{_right_node}, $depth+1);
 		if($deleted_node){
 		    $$node->{_right_node} = $new_ref;		
 		    $decrease = 1 * $change;
@@ -335,10 +326,8 @@ sub delete{
 		    $$node->{_obj} = $new_root_obj;
 	    }
 	    
-	    
 	    $decrease = $change;
-	
-	    
+		    
 	}  # end else determine whether need to look into left or right subtree, or neither   
     } # end else() there was root data.
 
@@ -357,10 +346,6 @@ sub delete{
 
     return ($deleted_node, $$node, $change);
 }
-
-
-
-
 
 
 #
@@ -410,7 +395,7 @@ sub delete_smallest
 	return ($obj, $$node, $change);
     }
     else{
-	my ($obj, $newleft, $change) = $self->delete_smallest(\$$node->{_left_node}, 1);	
+	my ($obj, $newleft, $change) = Tree::AVL::delete_smallest($self, \$$node->{_left_node}, 1);	
 	$decrease = -1 * $change;	
 	$$node->{_left_node} = $newleft;
 	$$node->{_balance} = $$node->{_balance} - $decrease;	
@@ -452,10 +437,10 @@ sub delete_largest
 	my $obj = $$node->{_obj};
 	if(!$$node->{_left_node} && !$depth){	    
 	    $$node = {
-		_obj      => undef,
-		_balance  => 0,
+		_obj        => undef,
+		_balance    => 0,
 		_right_node => undef,
-		_left_node => undef,
+		_left_node  => undef,
 	    };
 	    $change = 1;
 	}
@@ -474,7 +459,7 @@ sub delete_largest
 	return ($obj, $$node, $change);
     }
     else{
-	my ($obj, $newright, $change) = $self->delete_largest(\$$node->{_right_node}, 1);	
+	my ($obj, $newright, $change) = Tree::AVL::delete_largest($self, \$$node->{_right_node}, 1);	
 	$decrease = 1 * $change;	
 	$$node->{_right_node} = $newright;
 	$$node->{_balance} = $$node->{_balance} - $decrease;	
@@ -622,8 +607,6 @@ sub rotate_left
 	$$node->{_balance} = $$node->{_balance} - (1 - min($$node->{_left_node}->{_balance}, 0));
     }
 
-
-
     return $height_change;   
 }
 
@@ -709,8 +692,6 @@ sub double_rotate_left
 }
 
 
-
-
 sub is_empty{
     my ($self, $node) = @_;
     
@@ -739,7 +720,7 @@ sub largest
 	return $obj;
     }
     else{
-	my $obj = $self->largest($rnode);
+	my $obj = Tree::AVL->largest($self, $rnode);
 	return $obj;
     }   
 }
@@ -758,7 +739,7 @@ sub smallest
 	return $obj;
     }
     else{
-	my $obj = $self->smallest($lnode);
+	my $obj = Tree::AVL::smallest($self, $lnode);
 	return $obj;
     }   
 }
@@ -780,7 +761,6 @@ sub pop_smallest
 }
 
 
-
 sub get_key
 {
     my ($self, $node) = @_;
@@ -799,8 +779,6 @@ sub get_data
     my $data = $get_data_func->($obj);   
     return $data;    
 }
-
-
 
 sub get_height
 {    
@@ -828,7 +806,6 @@ sub get_height
 	return $depth_left < $depth_right ? $depth_right : $depth_left;
     }
 }
-
 
 
 #
@@ -873,9 +850,6 @@ sub lookup
 }
 
 
-
-
-
 #
 # lookup_obj
 #
@@ -917,6 +891,45 @@ sub lookup_obj
 }
 
 
+#
+# lookup_node
+#
+# usage:  $node_hash = $tree_ref->lookup($object)
+#
+sub lookup_node
+{
+    my ($self,
+	$object,
+	$cmpfunc) = @_;
+
+    my $node = $self->{_node};
+
+    if( !$node->{_obj} ) # no root data yet
+    {	    
+	return;
+    }
+    else 
+    {
+	while($node){
+	    my $node_obj = $node->{_obj};
+	    
+	    if(!$cmpfunc){
+		$cmpfunc = $self->{fcompare};
+	    }
+	    my $result = $cmpfunc->($node_obj, $object);
+	    if($result == 0){ # element is in tree- return the node.
+		return $node;
+	    }	   
+	    elsif($result < 0){ # look into right subtree
+		$node = $node->{_right_node};
+	    }  
+	    else{  # look into left subtree
+		$node = $node->{_left_node};		
+	    } 		    
+	} # end while
+	return;
+    } # end else 
+}
 
 
 
@@ -938,8 +951,7 @@ sub lookup_obj
 # $word.
 #
 sub acc_lookup
-{
-    
+{    
     my ($self,
 	$object,
 	$partial_cmpfunc, # partial comparison function to use
@@ -988,20 +1000,20 @@ sub acc_lookup
 			my $rightnode = $node->{_right_node};
 			my $leftnode = $node->{_left_node};
 		
-			return @$acc_results = ($self->acc_lookup($object, $partial_cmpfunc, 
-								  # do not pass in acc_results here
-								  $exact_cmpfunc, $rightnode), 
-						$self->acc_lookup($object, $partial_cmpfunc, 
-								  $exact_cmpfunc, $leftnode, \@$acc_results));
+			return @$acc_results = (Tree::AVL::acc_lookup($self, $object, $partial_cmpfunc, 
+									# do not pass in acc_results here
+									$exact_cmpfunc, $rightnode), 
+						Tree::AVL::acc_lookup($self, $object, $partial_cmpfunc, 
+									$exact_cmpfunc, $leftnode, \@$acc_results));
 		    }
 		    elsif($node->{_right_node}){
 		        my $rightnode = $node->{_right_node};
-			@$acc_results = ($self->acc_lookup($object, $partial_cmpfunc, 
-								$exact_cmpfunc, $rightnode, \@$acc_results));	
+			@$acc_results = (Tree::AVL::acc_lookup($self, $object, $partial_cmpfunc, 
+							       $exact_cmpfunc, $rightnode, \@$acc_results));	
 		    }
 		    elsif($node->{_left_node}){
 			my $leftnode = $node->{_left_node};
-			@$acc_results = ($self->acc_lookup($object, $partial_cmpfunc, 
+			@$acc_results = (Tree::AVL::acc_lookup($self, $object, $partial_cmpfunc, 
 							       $exact_cmpfunc, $leftnode, \@$acc_results));
 		    }
 		    return @$acc_results;
@@ -1020,8 +1032,6 @@ sub acc_lookup
 	return;
     }  # end else determine whether need to look into left or right subtree 	    
 }
-
-
 
 
 #
@@ -1055,9 +1065,6 @@ sub acc_lookup_memo
 }
 
 
-
-
-
 #
 # get_list_recursive
 #
@@ -1076,18 +1083,17 @@ sub get_list_recursive
 	$lst = [];
     }          
     if($node->{_left_node}){
-	@$lst = $self->get_list($node->{_left_node}, $lst);
+	@$lst = Tree::AVL::get_list_recursive($self, $node->{_left_node}, $lst);
     }
     my $obj = $node->{_obj};
     if($obj){	
 	push(@$lst, $obj);
     }    
     if($node->{_right_node}){
-	$self->get_list($node->{_right_node}, $lst);
+	Tree::AVL::get_list_recursive($self, $node->{_right_node}, $lst);
     }    
     return @$lst;
 }
-
 
 
 #
@@ -1139,9 +1145,6 @@ sub get_root
     return $self->{_node}->{_obj};
 }
 
-
-
-
 #
 # get_size
 #
@@ -1156,9 +1159,6 @@ sub get_size
     
     return $size;
 }
-
-
-
 
 #
 # iterator
@@ -1221,13 +1221,13 @@ sub get_keys_recursive
     }
  
     if($node->{_left_node}){
-	push(@keys, $self->get_keys($node->{_left_node}));
+	push(@keys, Tree::AVL::get_keys_recursive($self, $node->{_left_node}));
     }
     
     push(@keys, $self->get_key($node));
     
     if($node->{_right_node}){	
-	push(@keys, $self->get_keys($node->{_right_node}));
+	push(@keys, Tree::AVL::get_keys_recursive($self, $node->{_right_node}));
     }
     return @keys;
 }
@@ -1261,9 +1261,6 @@ sub get_keys
 }
 
 
-
-
-
 sub get_keys_iterator
 {
     my ($self) = @_;
@@ -1292,8 +1289,6 @@ sub get_keys_iterator
 	return;
     }
 }
-
-
 
 
 ################################################################################
@@ -1329,15 +1324,13 @@ sub print
 
     if($node->{_left_node}){
 	my $leftnode = $node->{_left_node};
-	$self->print($char . $o_char, $o_char, $leftnode, $depth+1);
+	Tree::AVL::print($self, $char . $o_char, $o_char, $leftnode, $depth+1);
     }
     if($node->{_right_node}){
 	my $rightnode =  $node->{_right_node};
-	$self->print($char . $o_char, $o_char, $rightnode, $depth+1);
+	Tree::AVL::print($self, $char . $o_char, $o_char, $rightnode, $depth+1);
     }
 }
-
-
 
 
 sub print_node
@@ -1362,11 +1355,11 @@ sub print_node
     print $char . $key . ": " . $data .  ": balance: " . $node->{_balance} . "\n";
     if($node->{_left_node}){
 	my $leftnode = $node->{_left_node};
-	$self->print_node($leftnode, $char . $o_char, $o_char);
+	Tree::AVL::print_node($self, $leftnode, $char . $o_char, $o_char);
     }
     if($node->{_right_node}){
 	my $rightnode =  $node->{_right_node};
-	$self->print_node($rightnode, $char . $o_char, $o_char);
+	Tree::AVL::print_node($self, $rightnode, $char . $o_char, $o_char);
     }
 }
 
@@ -1397,9 +1390,6 @@ sub print_iterative
     }
 }
 
-
-
-
 #
 # default_cmp_func
 #
@@ -1418,8 +1408,6 @@ sub default_cmp_func
     }
     return 0;
 }
-
-
 
 sub min
 {
@@ -1440,7 +1428,7 @@ __END__
 
 =head1 NAME
 
-Tree::AVL - An AVL (balanced binary) tree for time efficient storage and retrieval of comparable objects 
+Tree::AVL - An AVL (balanced binary) tree for time-efficient storage and retrieval of comparable objects 
 
 
 =head1 SYNOPSIS
@@ -1636,17 +1624,12 @@ creation.   Also, you can pass in functions to get the 'key' and 'data' of any o
 the contents of the tree).
 
 
-
 =head2 insert()
-
 
  $avltree->insert($thing);
 
 Places an object or thing in the tree.  Note:  This function and others have been implemented using iterative methods rather than recursive
 calls in order to reduce subroutine-call overhead and enhance efficiency.
-
-
-
 
 
 =head2 remove()
@@ -1656,15 +1639,25 @@ calls in order to reduce subroutine-call overhead and enhance efficiency.
 Removes items from the tree.
 
 
-
-
 =head2 lookup()
+
+    my $found_key = $avltree->lookup($thing);
+
+Looks for $key in the tree, returns $key if found, or nil if not found.
+
+
+=head2 lookup_obj()
 
     my $found_thing = $avltree->lookup($thing);
 
 Looks for $thing in the tree, returns reference to $thing if found, or nil if not found.
 
 
+=head2 lookup_node()
+
+    my $node = $avltree->lookup_node($thing);
+
+Looks for node in the tree, returns reference to node (a hash containing object and child-node pointers) if found, or nil if not found.
 
 
 =head2 acc_lookup()
@@ -1684,7 +1677,6 @@ the tree that are superstrings of $word.   acc_lookup uses the tree property to 
 
 
 
-
 =head2 largest()
 
  my $largest_thing = $avltree->largest();
@@ -1692,19 +1684,11 @@ the tree that are superstrings of $word.   acc_lookup uses the tree property to 
 Returns the largest item in the tree.
 
 
-
-
-
-
 =head2 smallest()
 
  my $smallest_thing = $avltree->smallest();
 
 Returns the smallest item in the tree.
-
-
-
-
 
 
 =head2 iterator()
@@ -1715,14 +1699,11 @@ Returns an iterator over the items in the tree.  By Default the iterator is in-o
 of the items returned by the iterator will be from highest to lowest.
 
 
-
-
 =head2 get_root()
 
     my $root_obj = get_root();
 
 Returns a reference to the object stored at the root of the tree.
-
 
 
 =head2 print()
