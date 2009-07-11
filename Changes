@@ -4,3 +4,9 @@ Revision history for Perl extension Tree::AVL.
 	- original version; created by h2xs 1.23 with options
 		-XAn Tree::AVL
 
+1.05  Sat Jul  11 12:57:00 2009
+      	- Fixed a bug in largest() function, where recursive 
+	  invocation was called incorrectly (discovered by Robert Lehr)
+	- Modified get_list and get_list_recursive so that they behave 
+	  consistently, returning an array of 0 length if there are
+	  no objects in the tree (discovered by Robert Lehr)

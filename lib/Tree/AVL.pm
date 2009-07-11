@@ -47,7 +47,7 @@ use Carp;
 use strict;
 use warnings;
 
-our $VERSION = '1.04';
+our $VERSION = '1.05';
 
 
 ##################################################
@@ -135,6 +135,13 @@ sub avl_insert
     if( !$self->{_node}->{_obj} ) # no root data yet, so populate with $object
     {	    
 	$self->{_node}->{_obj} = $object;	
+
+	print "no object yet...\n";
+	print "node: $$node\n";
+	print "node_balance: ";
+	print $$node->{_balance};
+	print "\n";    
+
 	return;
     }
     else # need to insert object if object is not already in tree
@@ -152,6 +159,8 @@ sub avl_insert
 	}	   
 	elsif($result < 0){ # insert into right subtree
 	    if (!defined($$node->{_right_node})){ # Need to create a new node.
+
+		print "creating new right node\n";
 
 		my $new_node = {
 			_obj      => $object,
@@ -171,6 +180,8 @@ sub avl_insert
 	else{  # insert into left subtree
 	    if (!defined($$node->{_left_node})){  # Need to create a new node.	    		
 		
+		print "creating new left node\n";
+
 		my $new_node = {
 		    _obj      => $object,
 		    _balance  => 0,
@@ -187,6 +198,13 @@ sub avl_insert
 	    }	    
 	}      	
     } # end else determine whether need to insert into left or right subtree 
+
+
+    print "node: $$node\n";
+    print "node_balance: ";
+    print $$node->{_balance};
+    print "\n";    
+    print "increase: $increase\n";
 
     $$node->{_balance} = $$node->{_balance} + $increase;
 
@@ -706,7 +724,18 @@ sub is_empty{
 }
 
 
-
+#
+# largest
+#
+# usage:
+#
+# my $largest_obj = $avltree->largest()
+#
+# Returns the largest-valued object in the tree
+#
+# Fixed 07/11/09 for version 1.05 by Robert Lehr:  
+# recursive invocation was called incorrectly 
+#
 sub largest
 {
     my ($self, $node) = @_;
@@ -720,12 +749,20 @@ sub largest
 	return $obj;
     }
     else{
-	my $obj = Tree::AVL->largest($self, $rnode);
+	my $obj = Tree::AVL::largest($self, $rnode);
 	return $obj;
     }   
 }
 
-
+#
+# smallest
+#
+# usage:
+#
+# my $largest_obj = $avltree->smallest()
+#
+# Returns the smallest-valued object in the tree
+#
 sub smallest
 {
     my ($self, $node) = @_;
@@ -1068,14 +1105,14 @@ sub acc_lookup_memo
 #
 # get_list_recursive
 #
-# usage:    @list_array = $tree_ref->get_list_recursive()
+# usage:    @list = $tree_ref->get_list_recursive()
 #
 # returns an array (list) containing all elements in the tree (in-order).
 #
 sub get_list_recursive
 {
     my ($self, $node, $lst) = @_; 
-    	
+
     if(!$node){
 	$node = $self->{_node};
     }    
@@ -1092,6 +1129,7 @@ sub get_list_recursive
     if($node->{_right_node}){
 	Tree::AVL::get_list_recursive($self, $node->{_right_node}, $lst);
     }    
+
     return @$lst;
 }
 
@@ -1099,7 +1137,7 @@ sub get_list_recursive
 #
 # get_list
 #
-# usage:    @list_array = $tree_ref->get_list()
+# usage:    @list = $tree_ref->get_list()
 #
 # returns an array (list) containing all elements in the tree (in-order).
 #
@@ -1107,12 +1145,11 @@ sub get_list
 {
     my ($self) = @_;
 
+    my $i = 0;
+    my @stack;
     my $node = $self->{_node};
 
-    my @stack;
-    my $i = 0;
-
-    my @objs;
+    my @objs = ();
 
     while(1){
 	while($node){	    
@@ -1124,7 +1161,9 @@ sub get_list
 	    last;
 	}
 	--$i;
-	push(@objs, $stack[$i]->{_obj});
+	if(defined($stack[$i]->{_obj})){
+	    push(@objs, $stack[$i]->{_obj});
+	}
 	$node = $stack[$i];	
 
 	$node = $node->{_right_node};
@@ -1681,14 +1720,14 @@ the tree that are superstrings of $word.   acc_lookup uses the tree property to 
 
  my $largest_thing = $avltree->largest();
 
-Returns the largest item in the tree.
+Returns the largest-valued item in the tree.
 
 
 =head2 smallest()
 
  my $smallest_thing = $avltree->smallest();
 
-Returns the smallest item in the tree.
+Returns the smallest-valued item in the tree.
 
 
 =head2 iterator()
@@ -1722,6 +1761,16 @@ This module requires these other modules and libraries:
 Test::More (required for installation test)
 
 
+=head1 CHANGES
+
+Version 1.05  Sat Jul  11 12:57:00 2009
+
+- Fixed a bug in largest() function, where recursive 
+  invocation was implemented incorrectly (discovered by Robert Lehr)
+
+- Modified get_list() and get_list_recursive() so that they behave 
+  consistently, returning an array of 0 length if there are
+  no objects in the tree (discovered by Robert Lehr)
 
 =head1 EXPORT
 
