@@ -50,7 +50,7 @@ use Carp;
 use strict;
 use warnings;
 
-our $VERSION = '1.06';
+our $VERSION = '1.07';
 
 
 ##################################################
@@ -139,12 +139,6 @@ sub avl_insert
     {	    
 	$self->{_node}->{_obj} = $object;	
 
-	print "no object yet...\n";
-	print "node: $$node\n";
-	print "node_balance: ";
-	print $$node->{_balance};
-	print "\n";    
-
 	return;
     }
     else # need to insert object if object is not already in tree
@@ -163,7 +157,6 @@ sub avl_insert
 	elsif($result < 0){ # insert into right subtree
 	    if (!defined($$node->{_right_node})){ # Need to create a new node.
 
-		print "creating new right node\n";
 
 		my $new_node = {
 			_obj      => $object,
@@ -182,8 +175,6 @@ sub avl_insert
 	}  
 	else{  # insert into left subtree
 	    if (!defined($$node->{_left_node})){  # Need to create a new node.	    		
-		
-		print "creating new left node\n";
 
 		my $new_node = {
 		    _obj      => $object,
@@ -203,11 +194,6 @@ sub avl_insert
     } # end else determine whether need to insert into left or right subtree 
 
 
-    print "node: $$node\n";
-    print "node_balance: ";
-    print $$node->{_balance};
-    print "\n";    
-    print "increase: $increase\n";
 
     $$node->{_balance} = $$node->{_balance} + $increase;
 

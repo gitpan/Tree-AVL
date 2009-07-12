@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Tree-AVL
-version:             1.06
+version:             1.07
 abstract:            An AVL (balanced binary) tree for time-efficient storage and retrieval of comparable objects 
 license:             ~
 author:              
