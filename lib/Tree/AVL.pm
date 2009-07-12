@@ -31,13 +31,16 @@
 # in order to restore balance.
 #
 # Balanced trees can save huge amounts of time in your programs
-# when used over regular flat data structures.  For example, if 
+# when used over regular flat data-structures.  For example, if 
 # you are processing as much as 1,125,899,906,842,624 ordered objects 
-# on some super-awesome mega workstation, the worst-case time (comparisons)
-# required  to access one of those objects will be 1,125,899,906,842,624 if
-# you keep them in a flat data structure.    However, using a balanced 
-# tree such as a 2-3 tree, a Red-Black tree or an AVL tree, worst-case 
-# time (comparisons) required will be just 50.  
+# on some super awesome mega workstation, the worst-case time (comparisons)
+# required  to access one of those objects will be on the order of 
+# ~1,125,899,906,842,624 (one quadrillion, one hundred twenty-five trillion, 
+# eight hundred eighty-nine billion, nine hundred six million, eight hundred 
+# forty-two thousand, six hundred twenty-four) if you keep them in a flat 
+# data structure.    However, using a balanced tree such as a 2-3 tree, a 
+# Red-Black tree or an AVL tree, the worst-case time (comparisons) required 
+# will be on the order of 50.  
 # 
 ##############################################################################
 
@@ -47,7 +50,7 @@ use Carp;
 use strict;
 use warnings;
 
-our $VERSION = '1.05';
+our $VERSION = '1.06';
 
 
 ##################################################
@@ -1638,13 +1641,16 @@ Deletion from an AVL tree may take as much as log(n) rotations
 in order to restore balance.
 
 Balanced trees can save huge amounts of time in your programs
-when used over regular flat data structures.  For example, if 
+when used over regular flat data-structures.  For example, if 
 you are processing as much as 1,125,899,906,842,624 ordered objects 
 on some super awesome mega workstation, the worst-case time (comparisons)
-required  to access one of those objects will be 1,125,899,906,842,624 if
-you keep them in a flat data structure.    However, using a balanced 
-tree such as a 2-3 tree, a Red-Black tree or an AVL tree, the worst-case 
-time (comparisons) required will be just 50.  
+required  to access one of those objects will be on the order of 
+~1,125,899,906,842,624 (one quadrillion, one hundred twenty-five trillion, 
+eight hundred eighty-nine billion, nine hundred six million, eight hundred 
+forty-two thousand, six hundred twenty-four) if you keep them in a flat 
+data structure.    However, using a balanced tree such as a 2-3 tree, a 
+Red-Black tree or an AVL tree, the worst-case time (comparisons) required 
+will be on the order of 50.  
 
 
 
@@ -1667,8 +1673,8 @@ the contents of the tree).
 
  $avltree->insert($thing);
 
-Places an object or thing in the tree.  Note:  This function and others have been implemented using iterative methods rather than recursive
-calls in order to reduce subroutine-call overhead and enhance efficiency.
+Places an object or thing in the tree.  Note:  This function and most others have been implemented using iterative methods, rather than recursive
+calls, in order to reduce subroutine-call overhead and slightly enhance efficiency.
 
 
 =head2 remove()
@@ -1703,8 +1709,8 @@ Looks for node in the tree, returns reference to node (a hash containing object 
 
     my @found_things = $avltree->acc_lookup($thing, $partial_cmp_func, $precise_cmp_func);
 
-Accumulative lookup, returns a list of all items whose keys satisfy the match function for the key for $object. 
-For example, suppose you have a "relaxed" compare function such as:
+Accumulative lookup; returns a list of all items whose keys satisfy the match function for the key for $object. 
+For example, suppose you have a "relaxed" comparison function such as:
 
     $word->compare_up_to($arg_word);
 
@@ -1712,7 +1718,7 @@ which returns true if the argument word is a proper 'superstring' of $word (mean
 followed by one or more characters).
 
 If you call acc_lookup() with this function as a parameter, acc_lookup() will return a list of all the words in
-the tree that are superstrings of $word.   acc_lookup uses the tree property to do this in O(log(n)) time.
+the tree that are superstrings of $word.   acc_lookup() uses the tree property to do this in O(log(n)) time.
 
 
 
@@ -1734,7 +1740,7 @@ Returns the smallest-valued item in the tree.
 
  my $it = $avltree->iterator();
 
-Returns an iterator over the items in the tree.  By Default the iterator is in-order from lowest to highest.  If you pass in the parameter ">", the order
+Returns an iterator over the items in the tree.  By default the iterator is in-order from lowest to highest.  If you pass in the parameter ">", the order
 of the items returned by the iterator will be from highest to lowest.
 
 
@@ -1766,11 +1772,11 @@ Test::More (required for installation test)
 Version 1.05  Sat Jul  11 12:57:00 2009
 
 - Fixed a bug in largest() function, where recursive 
-  invocation was implemented incorrectly (discovered by Robert Lehr)
+  invocation was implemented incorrectly. 
 
 - Modified get_list() and get_list_recursive() so that they behave 
   consistently, returning an array of 0 length if there are
-  no objects in the tree (discovered by Robert Lehr)
+  no objects in the tree.
 
 =head1 EXPORT
 
@@ -1785,6 +1791,10 @@ E.M. Landis.
 =head1 AUTHOR
 
 Matthias Beebe, E<lt>matthiasbeebe@gmail.comE<gt>
+
+=head1 ACKNOWLEDGEMENTS
+
+Thanks to Robert Lehr for discovering defects and inconsistent behavior, and for providing patches where necessary.
 
 =head1 COPYRIGHT AND LICENSE
 

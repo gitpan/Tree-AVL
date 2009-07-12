@@ -1,4 +1,4 @@
-Tree-AVL version 1.05
+Tree-AVL version 1.06
 =====================
 
 An implementation of an AVL tree for storing comparable objects.  
@@ -28,14 +28,19 @@ Deletion from an AVL tree may take as much as log(n) rotations
 in order to restore balance.
 
 Balanced trees can save huge amounts of time in your programs
-when used over regular flat data structures.  For example, if 
+when used over regular flat data-structures.  For example, if 
 you are processing as much as 1,125,899,906,842,624 ordered objects 
-on some super-awesome mega workstation, the worst-case time (comparisons)
-required  to access one of those objects will be 1,125,899,906,842,624 if
-you keep them in a flat data structure.    However, using a balanced 
-tree such as a 2-3 tree, a Red-Black tree or an AVL tree, worst-case 
-time (comparisons) required will be just 50.  
- 
+on some super awesome mega workstation, the worst-case time (comparisons)
+required  to access one of those objects will be on the order of 
+~1,125,899,906,842,624 (one quadrillion, one hundred twenty-five trillion, 
+eight hundred eighty-nine billion, nine hundred six million, eight hundred 
+forty-two thousand, six hundred twenty-four) if you keep them in a flat 
+data structure.    However, using a balanced tree such as a 2-3 tree, a 
+Red-Black tree or an AVL tree, the worst-case time (comparisons) required 
+will be on the order of 50.  
+
+
+
 Example usage
 =====================
 
