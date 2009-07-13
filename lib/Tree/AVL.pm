@@ -50,7 +50,7 @@ use Carp;
 use strict;
 use warnings;
 
-our $VERSION = '1.07';
+our $VERSION = '1.071';
 
 
 ##################################################
@@ -1720,6 +1720,21 @@ Returns the largest-valued item in the tree.
  my $smallest_thing = $avltree->smallest();
 
 Returns the smallest-valued item in the tree.
+
+
+=head2 pop_largest()
+
+ my $largest_thing = $avltree->pop_largest();
+
+Removes and returns the largest-valued item in the tree.
+
+
+=head2 pop_smallest()
+
+ my $smallest_thing = $avltree->pop_smallest();
+
+Removes and returns the smallest-valued item in the tree.
+
 
 
 =head2 iterator()
