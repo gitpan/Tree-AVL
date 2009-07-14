@@ -50,7 +50,7 @@ use Carp;
 use strict;
 use warnings;
 
-our $VERSION = '1.071';
+our $VERSION = '1.073';
 
 
 ##################################################
@@ -235,7 +235,8 @@ sub remove
 # usage:  ($found_obj) = $tree->delete($object);
 #
 # 
-sub delete{
+sub delete
+{
     
     my ($self, $object, $node, $depth) = @_;
     
@@ -713,6 +714,23 @@ sub is_empty{
 }
 
 
+
+
+#
+# smallest
+#
+# usage:
+#
+# my $largest_obj = $avltree->smallest()
+#
+# Returns the smallest-valued object in the tree
+#
+sub smallest
+{
+    my ($self, $node) = @_;
+    return $self->extremum($node, 0);
+}
+
 #
 # largest
 #
@@ -728,49 +746,52 @@ sub is_empty{
 sub largest
 {
     my ($self, $node) = @_;
+    return $self->extremum($node, 1);
+}
+
+
+
+sub extremum
+{
+    my ($self, $node, $which_extreme) = @_;
     
+    my $node_dir;
+    
+    if($which_extreme eq 0){
+	$node_dir = "_left_node";
+    }
+    elsif($which_extreme == 1){
+	$node_dir = "_right_node";
+    }
+    else{
+	croak("Bad extreme type supplied:  '$which_extreme' is not 0 or 1\n");
+    }
+
     if(!$node){
 	$node = $self->{_node};
     }     
     my $obj = $node->{_obj};
-    my $rnode = $node->{_right_node};
-    if(!$rnode){
+    my $next_node = $node->{$node_dir};
+    if(!$next_node){
 	return $obj;
     }
     else{
-	my $obj = Tree::AVL::largest($self, $rnode);
+	my $obj = Tree::AVL::extremum($self, $next_node, $which_extreme);
 	return $obj;
     }   
 }
 
+
+
 #
-# smallest
+# pop_largest
 #
 # usage:
 #
-# my $largest_obj = $avltree->smallest()
+# my $largest_obj = $avltree->pop_largest()
 #
-# Returns the smallest-valued object in the tree
+# Removes and returns the largest-valued object in the tree
 #
-sub smallest
-{
-    my ($self, $node) = @_;
-    
-    if(!$node){
-	$node = $self->{_node};
-    }
-    my $obj = $node->{_obj};
-    my $lnode = $node->{_left_node};
-    if(!$lnode){
-	return $obj;
-    }
-    else{
-	my $obj = Tree::AVL::smallest($self, $lnode);
-	return $obj;
-    }   
-}
-
-
 sub pop_largest
 {
     my ($self) = @_;    
@@ -778,7 +799,15 @@ sub pop_largest
     return $obj;
 }
 
-
+#
+# pop_smallest
+#
+# usage:
+#
+# my $largest_obj = $avltree->pop_smallest()
+#
+# Removes and returns the smallest-valued object in the tree
+#
 sub pop_smallest
 {
     my ($self) = @_;
