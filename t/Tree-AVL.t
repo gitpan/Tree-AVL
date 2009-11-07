@@ -7,7 +7,7 @@
 
 # change 'tests => 1' to 'tests => last_test_to_print';
 
-use Test::More tests => 19;
+use Test::More tests => 21;
 BEGIN { use_ok('Tree::AVL') };
 
 #########################
@@ -24,12 +24,26 @@ ok( $avltree = Tree::AVL->new(), 'tree created');
 
 is( $avltree->get_height(), 0, 'the height is 0' ); 
 
+# can insert objects that evaluate to false
+eval{
+   $avltree->insert("0");  
+};
+is( $@, '', '$@ is not set after object insert' );
+
+
+eval{
+   $avltree->remove("0");  
+};
+is( $@, '', '$@ is not set after object removal' );
+
+
 
 # can insert strings by default
 eval{
    $avltree->insert("arizona");  
 };
 is( $@, '', '$@ is not set after object insert' );
+
 
 eval{
    $avltree->insert("arkansas");

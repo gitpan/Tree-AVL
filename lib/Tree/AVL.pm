@@ -50,7 +50,7 @@ use Carp;
 use strict;
 use warnings;
 
-our $VERSION = '1.073';
+our $VERSION = '1.074';
 
 
 ##################################################
@@ -102,7 +102,7 @@ sub new {
 sub insert
 {
     my ($self, $object) = @_;    
-    if(!$object){
+    if(!defined($object)){
 	croak "Error: cannot insert uninitialized object into AVL tree.\n";
     }
     $self->avl_insert($object);
@@ -135,16 +135,16 @@ sub avl_insert
     my $increase = 0;  
     my $change = 0;
 
-    if( !$self->{_node}->{_obj} ) # no root data yet, so populate with $object
+    if( !defined($self->{_node}->{_obj}) ) # no root data yet, so populate with $object
     {	    
-	$self->{_node}->{_obj} = $object;	
+	$self->{_node}->{_obj} = $object;
 
 	return;
     }
     else # need to insert object if object is not already in tree
     {	    	    
 	$own_key = $node_obj->$get_key_func();
-	if(!$own_key){
+	if(!defined($own_key)){
 	    croak "Error:  get_key() method provided to Tree::AVL object returned a null value\n";
 	}
 
@@ -192,8 +192,6 @@ sub avl_insert
 	    }	    
 	}      	
     } # end else determine whether need to insert into left or right subtree 
-
-
 
     $$node->{_balance} = $$node->{_balance} + $increase;
 
@@ -251,7 +249,7 @@ sub delete
     my $change = 0;
     my $decrease = 0;
 
-    if(!$$node->{_obj}){ # no root data yet
+    if(!defined($$node->{_obj})){ # no root data yet
   	return;
     }
     else{
@@ -707,7 +705,7 @@ sub is_empty{
 	$node = $self->{_node};
     }
     
-    if(!$node->{_obj}){
+    if(!defined($node->{_obj})){
 	return 1;
     }
     return 0;
@@ -764,7 +762,7 @@ sub extremum
 	$node_dir = "_right_node";
     }
     else{
-	croak("Bad extreme type supplied:  '$which_extreme' is not 0 or 1\n");
+	croak("Bad extreme type supplied:  must be 0 or 1\n");
     }
 
     if(!$node){
@@ -876,7 +874,7 @@ sub lookup
 
     my $node = $self->{_node};
 
-    if(!$node->{_obj}){ # no root data yet
+    if(!defined($node->{_obj})){ # no root data yet
 	return;
     }
     else{
@@ -918,7 +916,7 @@ sub lookup_obj
 
     my $node = $self->{_node};
 
-    if( !$node->{_obj} ) # no root data yet
+    if(!defined($node->{_obj})) # no root data yet
     {	    
 	return;
     }
@@ -959,7 +957,7 @@ sub lookup_node
 
     my $node = $self->{_node};
 
-    if( !$node->{_obj} ) # no root data yet
+    if(!defined($node->{_obj})) # no root data yet
     {	    
 	return;
     }
@@ -1027,7 +1025,7 @@ sub acc_lookup
 	return ();
     }
     
-    if(!$node->{_obj}){ # no root data yet    	    
+    if(!defined($node->{_obj})){ # no root data yet    	    
 	return ();
     }
     else 
@@ -1369,10 +1367,15 @@ sub print
     my $key = $self->get_key($node);
     my $data = $self->get_data($node);
 
-    if(!$key){
+    if(!defined($self->{_node}->{_obj})){
+	print "tree is empty.\n";
+	return;
+    }
+
+    if(!defined($key)){
 	croak "get_key() function provided to Tree::AVL object returned a null value\n";
     }
-    if(!$data){
+    if(!defined($data)){
 	$data = "";
     }
 
@@ -1401,10 +1404,10 @@ sub print_node
     my $key = $self->get_key($node);
     my $data = $self->get_data($node);
     
-    if(!$key){
+    if(!defined($key)){
 	croak "get_key() function provided to Tree::AVL object returned a null value\n";
     }
-    if(!$data){
+    if(!defined($data)){
 	$data = "";
     }
 
@@ -1727,13 +1730,13 @@ Looks for node in the tree, returns reference to node (a hash containing object 
 Accumulative lookup; returns a list of all items whose keys satisfy the match function for the key for $object. 
 For example, suppose you have a "relaxed" comparison function such as:
 
-    $word->compare_up_to($arg_word);
+    $string->superstring_compare($arg_string);
 
-which returns true if the argument word is a proper 'superstring' of $word (meaning that it contains $word 
+which returns 0 (match) if the argument $arg_string is a proper 'superstring' of $string (meaning that it contains $string 
 followed by one or more characters).
 
-If you call acc_lookup() with this function as a parameter, acc_lookup() will return a list of all the words in
-the tree that are superstrings of $word.   acc_lookup() uses the tree property to do this in O(log(n)) time.
+If you call acc_lookup() with this function as a parameter, acc_lookup() will return a list of all the strings in
+the tree that are superstrings of $string.   acc_lookup() uses the tree property to do this in O(log(n)) time.
 
 
 
@@ -1799,6 +1802,12 @@ Test::More (required for installation test)
 
 =head1 CHANGES
 
+Version 1.074  Sat Nov  7 12:33:11 EST 2009
+
+- Fixed a bug where strings or objects that evaluate to boolean 'false' (such as the string "0") could not be 
+  inserted into the tree.
+
+
 Version 1.05  Sat Jul  11 12:57:00 2009
 
 - Fixed a bug in largest() function, where recursive 
@@ -1826,9 +1835,11 @@ Matthias Beebe, E<lt>matthiasbeebe@gmail.comE<gt>
 
 Thanks to Robert Lehr for discovering defects and inconsistent behavior, and for providing patches where necessary.
 
+Thanks to CPAN user N.Cleaton, for reporting a bug related to using boolean 'false' values in the tree.
+
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2009 by Matthias Beebe
+Copyright (C) 2009, 2010 by Matthias Beebe
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.8 or,

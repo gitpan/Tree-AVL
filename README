@@ -1,4 +1,4 @@
-Tree-AVL version 1.073
+Tree-AVL version 1.074
 =====================
 
 An implementation of an AVL tree for storing comparable objects.  
@@ -208,11 +208,11 @@ This module requires these other modules and libraries:
 
    no dependencies.
 
-COPYRIGHT AND LICENCE
+COPYRIGHT AND LICENSE
 
 Put the correct copyright and licence information here.
 
-Copyright (C) 2009 by Matthias Beebe
+Copyright (C) 2009,2010 by Matthias Beebe
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.8 or,
