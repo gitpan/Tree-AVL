@@ -50,7 +50,7 @@ use Carp;
 use strict;
 use warnings;
 
-our $VERSION = '1.074';
+our $VERSION = '1.075';
 
 
 ##################################################
@@ -1604,7 +1604,7 @@ Tree::AVL - An AVL (balanced binary) tree for time-efficient storage and retriev
  
  $avltree = Tree::AVL->new(
      fcompare => sub{ my ($o1, $o2) = @_;
- 		     if($o1->{_name} gt $o2->{_name}){ return -1}
+ 		     if($o1->{_name} gt $o2->{_name}){ return 1}
  		     elsif($o1->{_name} lt $o2->{_name}){ return -1}
  		     return 0;},
      fget_key => sub{ my($obj) = @_;
@@ -1684,15 +1684,22 @@ will be on the order of 50.
 Creates a new AVL tree object.  Without any arguments, the constructor returns a tree that works with strings and
 uses lexical comparison.   If you pass it an appropriate comparison function, the returned tree will work with any object of your
 creation.   Also, you can pass in functions to get the 'key' and 'data' of any object as well (this is useful for printing
-the contents of the tree).
+the contents of the tree).   See Example 2 above.
+
+=head3 Optional Object Comparison Function
+
+The optional comparison function you pass to the constructor should take two arguments of the type you are storing in the tree.  If the first object is
+of greater value than the second, the function should return 1;   if the second object is of greater value than the first, the function should return -1.  If both objects
+have the same value the function should return 0.
+
 
 
 =head2 insert()
 
  $avltree->insert($thing);
 
-Places an object or thing in the tree.  Note:  This function and most others have been implemented using iterative methods, rather than recursive
-calls, in order to reduce subroutine-call overhead and slightly enhance efficiency.
+Places an object or thing in the tree.  Note:  Where practical, functions such as this have been implemented using iterative methods to simulate recursion, rather than recursive
+calls, in order to reduce subroutine-call stack overhead and enhance efficiency.
 
 
 =head2 remove()

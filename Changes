@@ -10,3 +10,7 @@ Revision history for Perl extension Tree::AVL.
 	- Modified get_list and get_list_recursive so that they behave 
 	  consistently, returning an array of 0 length if there are
 	  no objects in the tree (discovered by Robert Lehr)
+
+1.075  Sat Jul  11 12:57:00 2009
+      	- Updated constructor documentation to include description
+	  of optional object comparison function.
