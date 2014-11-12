@@ -50,7 +50,7 @@ use Carp;
 use strict;
 use warnings;
 
-our $VERSION = '1.075';
+our $VERSION = '1.076';
 
 
 ##################################################
@@ -1079,7 +1079,7 @@ sub acc_lookup
 		$node = $node->{_left_node};	
 	    }	    
 	} # end while
-	if(defined(@$acc_results)){
+	if(scalar @{$acc_results} > 0){
 	    return @$acc_results;
 	}
 	return;
@@ -1809,6 +1809,10 @@ Test::More (required for installation test)
 
 =head1 CHANGES
 
+Version 1.076 Weds Nov  12 12:33:11 EST 2014
+
+- Replaced deprecated call to 'defined' method for versions of perl greater than v5.16
+
 Version 1.074  Sat Nov  7 12:33:11 EST 2009
 
 - Fixed a bug where strings or objects that evaluate to boolean 'false' (such as the string "0") could not be 
@@ -1840,7 +1844,9 @@ Matthias Beebe, E<lt>matthiasbeebe@gmail.comE<gt>
 
 =head1 ACKNOWLEDGEMENTS
 
-Thanks to Robert Lehr for discovering defects and inconsistent behavior, and for providing patches where necessary.
+Thanks to Robert Lehr for discovering defects and inconsistent behavior, and for providing patches where necessary.  
+
+Thanks to Volker Apelt for addressing and fixing deprecated use of the 'defined' method.
 
 Thanks to CPAN user N.Cleaton, for reporting a bug related to using boolean 'false' values in the tree.
 
