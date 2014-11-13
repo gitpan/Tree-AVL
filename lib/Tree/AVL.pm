@@ -30,17 +30,14 @@
 # Deletion from an AVL tree may take as much as log(n) rotations
 # in order to restore balance.
 #
-# Balanced trees can save huge amounts of time in your programs
-# when used over regular flat data-structures.  For example, if 
-# you are processing as much as 1,125,899,906,842,624 ordered objects 
-# on some super awesome mega workstation, the worst-case time (comparisons)
-# required  to access one of those objects will be on the order of 
-# ~1,125,899,906,842,624 (one quadrillion, one hundred twenty-five trillion, 
-# eight hundred eighty-nine billion, nine hundred six million, eight hundred 
-# forty-two thousand, six hundred twenty-four) if you keep them in a flat 
-# data structure.    However, using a balanced tree such as a 2-3 tree, a 
-# Red-Black tree or an AVL tree, the worst-case time (comparisons) required 
-# will be on the order of 50.  
+# Balanced trees can save time in your programs
+# when used instead of regular flat data-structures.  For example, if 
+# you are processing as much as 1,125,899,906,842,624 (a quadrillion) ordered 
+# objects, the time (number of comparisons) required to access one of those 
+# objects will be on the order of 1,125,899,906,842,624 in the worst case
+# if you keep them in a flat data structure.    However, using a balanced 
+# tree such as a 2-3 tree, a Red-Black tree or an AVL tree, the worst-case 
+# time (comparisons) required will 50.  
 # 
 ##############################################################################
 
@@ -50,7 +47,7 @@ use Carp;
 use strict;
 use warnings;
 
-our $VERSION = '1.076';
+our $VERSION = '1.077';
 
 
 ##################################################
@@ -1516,7 +1513,7 @@ Tree::AVL - An AVL (balanced binary) tree for time-efficient storage and retriev
  $avltree->insert("massachusetts");
  $avltree->insert("maryland");
  $avltree->insert("montana");
- $avltree->insert("madagascar"); # just seeing if you're paying attention..
+ $avltree->insert("madagascar");
 
  print $avltree->get_height() . "\n";  # output: 2 (height is zero-based) 
 
@@ -1658,17 +1655,14 @@ Insertion into an AVL tree will require at most 1 single or double rotation.
 Deletion from an AVL tree may take as much as log(n) rotations
 in order to restore balance.
 
-Balanced trees can save huge amounts of time in your programs
-when used over regular flat data-structures.  For example, if 
-you are processing as much as 1,125,899,906,842,624 ordered objects 
-on some super awesome mega workstation, the worst-case time (comparisons)
-required  to access one of those objects will be on the order of 
-~1,125,899,906,842,624 (one quadrillion, one hundred twenty-five trillion, 
-eight hundred eighty-nine billion, nine hundred six million, eight hundred 
-forty-two thousand, six hundred twenty-four) if you keep them in a flat 
-data structure.    However, using a balanced tree such as a 2-3 tree, a 
-Red-Black tree or an AVL tree, the worst-case time (comparisons) required 
-will be on the order of 50.  
+Balanced trees can save time in your programs
+when used instead of regular flat data-structures.  For example, if 
+you are processing as much as 1,125,899,906,842,624 (a quadrillion) ordered 
+objects, the time (number of comparisons) required to access one of those 
+objects will be on the order of 1,125,899,906,842,624 in the worst case
+if you keep them in a flat data structure.    However, using a balanced 
+tree such as a 2-3 tree, a Red-Black tree or an AVL tree, the worst-case 
+time (comparisons) required will 50.  
 
 
 
@@ -1844,11 +1838,14 @@ Matthias Beebe, E<lt>matthiasbeebe@gmail.comE<gt>
 
 =head1 ACKNOWLEDGEMENTS
 
-Thanks to Robert Lehr for discovering defects and inconsistent behavior, and for providing patches where necessary.  
+Thanks to: 
 
-Thanks to Volker Apelt for addressing and fixing deprecated use of the 'defined' method.
+Robert Lehr for discovering defects and inconsistent behavior, and for providing patches where necessary.  
 
-Thanks to CPAN user N.Cleaton, for reporting a bug related to using boolean 'false' values in the tree.
+CPAN user N.Cleaton, for reporting a bug related to using boolean 'false' values in the tree.
+
+Volker Apelt for addressing and fixing deprecated use of the 'defined' method.
+
 
 =head1 COPYRIGHT AND LICENSE
 
